@@ -1,0 +1,334 @@
+/* =============================================
+   ILS Help Desk — Custom Brand Styles
+   (Bootstrap 5 overrides + brand-specific)
+   ============================================= */
+
+/* ── Brand Color Tokens ── */
+:root {
+    --ils-yellow:  #F0A500;
+    --ils-yellow-dark: #D4920A;
+    --ils-green:   #2E8B4A;
+    --ils-green-light: #3DAD5E;
+    --ils-orange:  #F57C00;
+    --ils-red:     #E53935;
+    --ils-blue:    #1A3C8E;
+    --ils-bg:      #F4F6FB;
+    --ils-border:  #E0E3EE;
+    --ils-text:    #1A1A2E;
+    --ils-gray:    #666680;
+    --ils-light:   #999AAA;
+}
+
+/* ── Global ── */
+body { background-color: var(--ils-bg); color: var(--ils-text); }
+
+/* ── Logo ── */
+.ils-script {
+    font-family: 'Brush Script MT', cursive;
+    color: var(--ils-yellow);
+    line-height: 1;
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+.ils-helpdesk {
+    font-weight: 800;
+    color: var(--ils-green);
+    letter-spacing: -0.01em;
+    transition: transform 0.4s ease;
+}
+.navbar-brand .ils-script   { font-size: 2.3rem; }
+.navbar-brand .ils-helpdesk { font-size: 1.3rem; }
+
+/* Large logo (auth pages) */
+.auth-logo { display: flex; justify-content: center; align-items: center; gap: 12px; }
+.auth-logo .ils-script   { font-size: 3.5rem; }
+.auth-logo .ils-helpdesk { font-size: 2.3rem; }
+
+/* Logo Animation */
+.navbar-brand:hover .ils-script,
+.auth-logo:hover .ils-script {
+    transform: scale(1.1) rotate(-3deg);
+}
+.navbar-brand:hover .ils-helpdesk,
+.auth-logo:hover .ils-helpdesk {
+    transform: translateX(4px);
+}
+
+/* ── Custom Buttons ── */
+.btn-yellow {
+    background-color: var(--ils-yellow);
+    border-color: var(--ils-yellow);
+    color: #fff;
+}
+.btn-yellow:hover, .btn-yellow:focus {
+    background-color: var(--ils-yellow-dark);
+    border-color: var(--ils-yellow-dark);
+    color: #fff;
+}
+.btn-yellow:active { background-color: #c27d00; color: #fff; }
+
+.btn-ils-green {
+    background-color: var(--ils-green);
+    border-color: var(--ils-green);
+    color: #fff;
+}
+.btn-ils-green:hover, .btn-ils-green:focus {
+    background-color: #236b39;
+    border-color: #236b39;
+    color: #fff;
+}
+
+.btn-ils-orange {
+    background-color: var(--ils-orange);
+    border-color: var(--ils-orange);
+    color: #fff;
+}
+.btn-ils-orange:hover { background-color: #c96200; border-color: #c96200; color: #fff; }
+
+.btn-ils-blue {
+    background-color: #7A8DB5;
+    border-color: #7A8DB5;
+    color: #fff;
+}
+.btn-ils-blue:hover { background-color: #6a7da5; color: #fff; }
+
+/* ── Urgency Badges ── */
+.badge-high   { background-color: #FFE8E8 !important; color: var(--ils-red)    !important; }
+.badge-medium { background-color: #FFF3E0 !important; color: var(--ils-orange) !important; }
+.badge-low    { background-color: #E8F5E9 !important; color: var(--ils-green)  !important; }
+
+/* ── Form Controls ── */
+.form-control:focus, .form-select:focus {
+    border-color: var(--ils-green);
+    box-shadow: 0 0 0 0.2rem rgba(46,139,74,0.15);
+}
+.form-check-input:checked { background-color: var(--ils-green); border-color: var(--ils-green); }
+
+/* ── Navbar ── */
+.ils-navbar {
+    background: #fff;
+    border-bottom: 1.5px solid var(--ils-border);
+    box-shadow: 0 1px 8px rgba(0,0,0,0.06);
+}
+
+/* ── Bell & Notification Dot ── */
+.bell-wrap {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    color: var(--ils-gray);
+    text-decoration: none;
+}
+.bell-wrap:hover { color: var(--ils-text); }
+.notif-dot {
+    position: absolute;
+    top: -2px;
+    right: -4px;
+    background: var(--ils-red);
+    color: #fff;
+    border-radius: 10px;
+    font-size: 0.6rem;
+    font-weight: 700;
+    min-width: 16px;
+    height: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 3px;
+    line-height: 1;
+}
+
+/* ── Avatar ── */
+.user-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--ils-green);
+    color: #fff;
+    font-weight: 700;
+    font-size: 0.9rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    flex-shrink: 0;
+    text-decoration: none;
+}
+.user-avatar img { width: 100%; height: 100%; object-fit: cover; }
+
+.user-avatar-lg {
+    width: 88px;
+    height: 88px;
+    border-radius: 50%;
+    background: var(--ils-green);
+    color: #fff;
+    font-weight: 700;
+    font-size: 2rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+.user-avatar-lg img { width: 100%; height: 100%; object-fit: cover; }
+
+/* ── Nav Tabs (student) ── */
+.ils-tabs .nav-link {
+    color: var(--ils-gray);
+    font-weight: 600;
+    border: none;
+    border-bottom: 2.5px solid transparent;
+    border-radius: 0;
+    padding: 12px 18px;
+}
+.ils-tabs .nav-link.active {
+    color: var(--ils-text);
+    border-bottom-color: var(--ils-blue);
+    background: transparent;
+}
+.ils-tabs .nav-link:hover { color: var(--ils-text); background: transparent; }
+
+/* ── Ticket Overview (stat mini-cards) ── */
+.overview-pill {
+    border-radius: 20px;
+    padding: 10px 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+.overview-pill.pending  { background: #FFF8EE; color: #CC7A00; }
+.overview-pill.resolved { background: #EAFAF1; color: var(--ils-green); }
+
+/* ── Ticket ID cell ── */
+.ticket-id { font-weight: 700; color: var(--ils-green); }
+
+/* ── Section heading ── */
+.section-heading {
+    font-size: 1.35rem;
+    font-weight: 800;
+    color: var(--ils-text);
+}
+
+/* ── Cards ── */
+.ils-card {
+    border: 1px solid var(--ils-border);
+    border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+}
+
+/* ── Detail row (view ticket) ── */
+.detail-item { padding: 10px 0; border-bottom: 1px solid var(--ils-border); font-size: 0.9rem; }
+.detail-item:last-child { border-bottom: none; }
+.detail-item .detail-label { color: var(--ils-gray); font-weight: 500; }
+.detail-item .detail-val   { font-weight: 600; }
+
+/* ── Block / Success screen ── */
+.ils-state-screen {
+    min-height: 60vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 40px 20px;
+}
+
+/* ── Notification list ── */
+.notif-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--ils-border);
+    transition: background 0.1s;
+    text-decoration: none;
+    color: inherit;
+}
+.notif-item:last-child { border-bottom: none; }
+.notif-item:hover { background: #f8f9ff; }
+.notif-item.unread { background: #f0fff4; }
+.notif-item .notif-title { font-size: 0.875rem; font-weight: 700; color: var(--ils-green); }
+.notif-item .notif-msg   { font-size: 0.8rem;   color: var(--ils-gray); }
+.notif-item .notif-time  { font-size: 0.75rem;  color: var(--ils-light); white-space: nowrap; }
+.notif-avatar-sm {
+    width: 40px; height: 40px; border-radius: 50%;
+    background: #e8f5e9; color: var(--ils-green);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; overflow: hidden;
+}
+.notif-avatar-sm img { width:100%;height:100%;object-fit:cover; }
+
+/* ── Donut chart ── */
+.donut-wrap { position: relative; width: 90px; height: 90px; flex-shrink: 0; }
+.donut-wrap canvas { width: 90px !important; height: 90px !important; }
+.donut-center {
+    position: absolute; top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center; line-height: 1.1;
+    font-size: 1rem; font-weight: 800;
+}
+.donut-center small { font-size: 0.6rem; font-weight: 500; color: var(--ils-gray); display: block; }
+
+/* ── Admin table requester cell ── */
+.req-name  { font-weight: 600; font-size: 0.875rem; }
+.req-email { font-size: 0.78rem; color: var(--ils-gray); }
+
+/* ── Resolve modal ── */
+.modal-content { border-radius: 12px; border: none; box-shadow: 0 8px 40px rgba(0,0,0,0.15); }
+
+/* ── Sign out button ── */
+.btn-signout {
+    color: var(--ils-red);
+    background: #fff5f5;
+    border: 1.5px solid #ffcdd2;
+    font-weight: 600;
+    font-size: 0.82rem;
+}
+.btn-signout:hover { background: #ffebee; color: var(--ils-red); border-color: #ffcdd2; }
+
+/* ── Auth card ── */
+.auth-card { max-width: 440px; width: 100%; }
+
+/* ── Profile info rows ── */
+.profile-row {
+    display: flex; align-items: center; gap: 12px;
+    padding: 13px 0; border-bottom: 1px solid var(--ils-border);
+    font-size: 0.9rem;
+}
+.profile-row:last-child { border-bottom: none; }
+.profile-row .p-label { color: var(--ils-gray); font-size: 0.78rem; font-weight: 500; display: block; }
+.profile-row .p-val   { font-weight: 600; }
+.profile-icon { color: var(--ils-green); flex-shrink: 0; }
+
+/* ── Chart tabs ── */
+.chart-tab-group {
+    display: inline-flex; gap: 2px;
+    background: #f0f1f5; border-radius: 8px; padding: 4px;
+}
+.chart-tab-btn {
+    padding: 5px 16px; border: none; border-radius: 6px;
+    background: transparent; font-size: 0.85rem; font-weight: 600;
+    color: var(--ils-gray); cursor: pointer;
+}
+.chart-tab-btn.active { background: #fff; color: var(--ils-text); box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+
+/* ── Responsive ── */
+@media (max-width: 576px) {
+    .ils-tabs .nav-link { padding: 10px 12px; font-size: 0.85rem; }
+    .section-heading { font-size: 1.15rem; }
+}
+
+/* ── Pagination ── */
+.page-link { color: var(--ils-green); }
+.page-item.active .page-link { background-color: var(--ils-green); border-color: var(--ils-green); }
+.page-link:hover { color: var(--ils-green-light); }
+.page-link:focus { box-shadow: 0 0 0 0.2rem rgba(46,139,74,0.2); }
+
+/* ── Footer ── */
+.ils-footer { font-size: 0.8rem; color: var(--ils-light); }
+
+/* ── Analytics stat icon ── */
+.stat-icon-box {
+    width: 48px; height: 48px; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
