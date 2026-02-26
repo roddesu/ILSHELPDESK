@@ -41,6 +41,18 @@ function requireAdmin() {
 
 function getCurrentUser() {
     if (!isLoggedIn()) return null;
+    // Hardcoded admin uses id=0 — return session data as synthetic user
+    if ($_SESSION['user_id'] === 0) {
+        $parts = explode(' ', $_SESSION['name'], 2);
+        return [
+            'id'            => 0,
+            'first_name'    => $parts[0],
+            'last_name'     => $parts[1] ?? '',
+            'school_email'  => $_SESSION['email'],
+            'role'          => $_SESSION['role'],
+            'profile_image' => null,
+        ];
+    }
     $db = getDB();
     $stmt = $db->prepare("SELECT * FROM users WHERE id = ?");
     $stmt->execute([$_SESSION['user_id']]);
@@ -48,6 +60,7 @@ function getCurrentUser() {
 }
 
 function loginUser($user) {
+    session_regenerate_id(true);
     $_SESSION['user_id'] = $user['id'];
     $_SESSION['role']    = $user['role'];
     $_SESSION['name']    = $user['first_name'] . ' ' . $user['last_name'];
