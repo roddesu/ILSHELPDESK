@@ -375,5 +375,30 @@ require_once __DIR__ . '/includes/auth_actions.php';
     resetModal.show();
 </script>
 <?php endif; ?>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    function setupValidation(passId, confirmId) {
+        const p = document.getElementById(passId);
+        const c = document.getElementById(confirmId);
+        if (!p || !c) return;
+
+        const validate = () => {
+            if (c.value === '') {
+                c.classList.remove('is-invalid', 'is-valid');
+            } else if (p.value !== c.value) {
+                c.classList.add('is-invalid');
+                c.classList.remove('is-valid');
+            } else {
+                c.classList.remove('is-invalid');
+                c.classList.add('is-valid');
+            }
+        };
+        p.addEventListener('input', validate);
+        c.addEventListener('input', validate);
+    }
+    setupValidation('spass', 'scpass'); // Signup
+    setupValidation('rpass', 'rcpass'); // Reset Password
+});
+</script>
 </body>
 </html>
