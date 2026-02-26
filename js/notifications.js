@@ -26,8 +26,8 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initial fetch
     fetchNotifications();
 
-    // Poll every 60 seconds
-    setInterval(fetchNotifications, 60000);
+    // Poll every 10 seconds
+    setInterval(fetchNotifications, 10000);
 
     // Mark as read when dropdown opens
     if (notifDropdown) {

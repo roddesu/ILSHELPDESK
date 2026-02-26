@@ -156,10 +156,7 @@ $justResolved = isset($_GET['resolved']);
                     <span class="detail-label">Date Created</span>
                     <span class="detail-val"><?= formatDate($ticket['created_at']) ?></span>
                 </div>
-                <div class="detail-item d-flex justify-content-between">
-                    <span class="detail-label">Date Needed</span>
-                    <span class="detail-val"><?= $ticket['date_needed'] ? formatDate($ticket['date_needed']) : '—' ?></span>
-                </div>
+
             </div>
         </div>
 

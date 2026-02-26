@@ -22,11 +22,11 @@ if (isset($_POST['action']) && $_POST['action'] === 'mark_read') {
 // Fetch Notifications
 if ($isAdmin) {
     $stmt = $db->query("
-        SELECT n.*, u.first_name, u.last_name 
-        FROM notifications n 
-        JOIN users u ON n.user_id = u.id 
-        WHERE n.user_id IN (SELECT id FROM users WHERE role='admin') 
-        ORDER BY n.created_at DESC LIMIT 5
+        SELECT ticket_id, type, message, MIN(is_read) AS is_read, MAX(created_at) AS created_at
+        FROM notifications
+        WHERE user_id IN (SELECT id FROM users WHERE role='admin')
+        GROUP BY ticket_id, type, message
+        ORDER BY created_at DESC LIMIT 5
     ");
     $notifs = $stmt->fetchAll();
     $unread = getAdminUnreadCount();

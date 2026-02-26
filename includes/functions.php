@@ -86,10 +86,17 @@ function createNotification($userId, $ticketId, $type, $message) {
     $stmt->execute([$userId, $ticketId, $type, $message]);
 }
 
+function notifyAdmins($ticketId, $type, $message) {
+    $db    = getDB();
+    $admin = $db->query("SELECT id FROM users WHERE role = 'admin' LIMIT 1")->fetch();
+    if (!$admin) return;
+    $db->prepare("INSERT INTO notifications (user_id, ticket_id, type, message) VALUES (?, ?, ?, ?)")
+       ->execute([$admin['id'], $ticketId, $type, $message]);
+}
+
 function getAdminUnreadCount() {
     $db   = getDB();
-    $stmt = $db->prepare("SELECT COUNT(*) FROM notifications WHERE user_id IN (SELECT id FROM users WHERE role='admin') AND is_read = 0");
-    $stmt->execute();
+    $stmt = $db->query("SELECT COUNT(*) FROM (SELECT DISTINCT ticket_id, type FROM notifications WHERE user_id IN (SELECT id FROM users WHERE role='admin') AND is_read = 0) t");
     return (int)$stmt->fetchColumn();
 }
 

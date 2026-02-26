@@ -24,7 +24,7 @@ $fSubject = $_GET['subject']          ?? '';
 $fDesc    = trim($_GET['description'] ?? '');
 $fDept    = $_GET['department']       ?? '';
 $fUrgency = $_GET['urgency']          ?? '';
-$fDate    = $_GET['date_needed']      ?? '';
+$fDate    = $_GET['date_submitted']    ?? '';
 
 $perPage = 5;
 $page    = max(1, (int)($_GET['page'] ?? 1));
@@ -43,7 +43,7 @@ if ($fSubject)  { $where .= " AND t.subject = ?";             $params[] = $fSubj
 if ($fDesc)     { $where .= " AND t.issue_description LIKE ?"; $params[] = "%$fDesc%"; }
 if ($fDept)     { $where .= " AND u.department = ?";          $params[] = $fDept; }
 if ($fUrgency)  { $where .= " AND t.urgency_level = ?";       $params[] = $fUrgency; }
-if ($fDate)     { $where .= " AND t.date_needed = ?";         $params[] = $fDate; }
+if ($fDate)     { $where .= " AND DATE(t.created_at) = ?";    $params[] = $fDate; }
 
 $sql = "SELECT t.*, u.first_name, u.last_name, u.school_email, u.department FROM tickets t JOIN users u ON t.user_id = u.id $where ORDER BY t.created_at DESC";
 
@@ -59,7 +59,7 @@ $tickets = $listStmt->fetchAll();
 $departments = ['CICT', 'CAMS', 'CENG', 'CAS', 'CIT', 'CBA', 'COED', 'CNRS'];
 $subjects    = ['LMS Account', 'UB Mail Account', 'EBrahman Account', 'Ubian Account'];
 
-$qBase = http_build_query(array_filter(['search' => $search, 'concern' => $fConcern, 'subject' => $fSubject, 'description' => $fDesc, 'department' => $fDept, 'urgency' => $fUrgency, 'date_needed' => $fDate]));
+$qBase = http_build_query(array_filter(['search' => $search, 'concern' => $fConcern, 'subject' => $fSubject, 'description' => $fDesc, 'department' => $fDept, 'urgency' => $fUrgency, 'date_submitted' => $fDate]));
 $qBase = $qBase ? '&' . $qBase : '';
 ?>
 <!DOCTYPE html>
@@ -168,7 +168,7 @@ $qBase = $qBase ? '&' . $qBase : '';
                 <?php if ($fDesc):    ?><input type="hidden" name="description" value="<?= htmlspecialchars($fDesc) ?>"><?php endif; ?>
                 <?php if ($fDept):    ?><input type="hidden" name="department"  value="<?= htmlspecialchars($fDept) ?>"><?php endif; ?>
                 <?php if ($fUrgency): ?><input type="hidden" name="urgency"     value="<?= htmlspecialchars($fUrgency) ?>"><?php endif; ?>
-                <?php if ($fDate):    ?><input type="hidden" name="date_needed" value="<?= htmlspecialchars($fDate) ?>"><?php endif; ?>
+                <?php if ($fDate):    ?><input type="hidden" name="date_submitted" value="<?= htmlspecialchars($fDate) ?>"><?php endif; ?>
             </div>
             <a href="/ILSHD/admin/analytics.php" class="btn btn-ils-orange text-nowrap">View Analytics</a>
         </form>
@@ -214,7 +214,7 @@ $qBase = $qBase ? '&' . $qBase : '';
                     </select>
                 </div>
                 <div class="col">
-                    <input type="date" name="date_needed" class="form-control form-control-sm"
+                    <input type="date" name="date_submitted" class="form-control form-control-sm"
                            value="<?= htmlspecialchars($fDate) ?>" onchange="this.form.submit()">
                 </div>
             </div>
@@ -232,7 +232,7 @@ $qBase = $qBase ? '&' . $qBase : '';
                         <th>Requester</th>
                         <th>Department</th>
                         <th>Urgency</th>
-                        <th>Date Needed</th>
+                        <th>Date Submitted</th>
                         <th>Action</th>
                     </tr>
                 </thead>
@@ -254,7 +254,7 @@ $qBase = $qBase ? '&' . $qBase : '';
                         <td>
                             <span class="badge badge-<?= strtolower($t['urgency_level']) ?>"><?= $t['urgency_level'] ?></span>
                         </td>
-                        <td class="small"><?= $t['date_needed'] ? formatDateShort($t['date_needed']) : '—' ?></td>
+                        <td class="small"><?= formatDateShort($t['created_at']) ?></td>
                         <td>
                             <a href="/ILSHD/admin/view-ticket.php?id=<?= $t['id'] ?>" class="btn btn-ils-orange btn-sm">View</a>
                         </td>

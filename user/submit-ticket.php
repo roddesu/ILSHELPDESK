@@ -57,6 +57,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !$pendingTicket) {
                 $ticketId = $db->lastInsertId();
 
                 createNotification($userId, $ticketId, 'submitted', "Ticket #$ticketId submitted: $subject");
+                notifyAdmins($ticketId, 'submitted', "New ticket #$ticketId: $subject");
                 sendTicketConfirmation($user['school_email']);
 
                 $ticketSubmitted = true;

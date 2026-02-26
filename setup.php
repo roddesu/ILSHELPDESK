@@ -28,8 +28,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $dbUser     = trim($_POST['db_user']     ?? 'root');
     $dbPass     = $_POST['db_pass']          ?? '';
     $dbName     = trim($_POST['db_name']     ?? 'ilshd_db');
-    $adminFirst = trim($_POST['admin_first'] ?? '');
-    $adminLast  = trim($_POST['admin_last']  ?? '');
     $adminEmail = trim($_POST['admin_email'] ?? '');
     $adminPass  = $_POST['admin_pass']       ?? '';
     $adminConf  = $_POST['admin_conf']       ?? '';
@@ -38,8 +36,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!$dbHost || !$dbUser || !$dbName) {
         $errors[] = 'Database host, user, and name are required.';
     }
-    if (!$adminFirst || !$adminLast || !$adminEmail || !$adminPass) {
-        $errors[] = 'All admin account fields are required.';
+    if (!$adminEmail || !$adminPass) {
+        $errors[] = 'Admin email and password are required.';
     }
     if ($adminPass && $adminConf && $adminPass !== $adminConf) {
         $errors[] = 'Admin passwords do not match.';
@@ -148,9 +146,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $hash = password_hash($adminPass, PASSWORD_DEFAULT);
             $pdo->prepare("
                 INSERT INTO users (first_name, last_name, department, classification, school_email, password, role)
-                VALUES (?, ?, 'ILS', 'Admin', ?, ?, 'admin')
+                VALUES ('ILS', 'Support', 'ILS', 'Admin', ?, ?, 'admin')
                 ON DUPLICATE KEY UPDATE password = VALUES(password), role = 'admin'
-            ")->execute([$adminFirst, $adminLast, $adminEmail, $hash]);
+            ")->execute([$adminEmail, $hash]);
 
             // Step 5: Create uploads dir
             if (!is_dir($uploadsDir)) {
@@ -201,8 +199,6 @@ PHP;
 $dbHost     = $_POST['db_host']      ?? 'localhost';
 $dbUser     = $_POST['db_user']      ?? 'root';
 $dbName     = $_POST['db_name']      ?? 'ilshd_db';
-$adminFirst = $_POST['admin_first']  ?? '';
-$adminLast  = $_POST['admin_last']   ?? '';
 $adminEmail = $_POST['admin_email']  ?? '';
 ?>
 <!DOCTYPE html>
@@ -517,20 +513,7 @@ $adminEmail = $_POST['admin_email']  ?? '';
         <div class="setup-card">
             <h2><span class="step-num">3</span> Admin Account</h2>
 
-            <div class="form-grid">
-                <div class="form-group">
-                    <label for="admin_first">First Name</label>
-                    <input type="text" id="admin_first" name="admin_first" class="form-control"
-                           value="<?= htmlspecialchars($_POST['admin_first'] ?? '') ?>" required>
-                </div>
-                <div class="form-group">
-                    <label for="admin_last">Last Name</label>
-                    <input type="text" id="admin_last" name="admin_last" class="form-control"
-                           value="<?= htmlspecialchars($_POST['admin_last'] ?? '') ?>" required>
-                </div>
-            </div>
-
-            <div class="form-group" style="margin-top:12px;">
+            <div class="form-group">
                 <label for="admin_email">Email</label>
                 <input type="email" id="admin_email" name="admin_email" class="form-control"
                        placeholder="e.g., admin@ils.local"
