@@ -24,14 +24,28 @@ $errors  = [];
 $success = false;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $dbHost    = trim($_POST['db_host']     ?? 'localhost');
-    $dbUser    = trim($_POST['db_user']     ?? 'root');
-    $dbPass    = $_POST['db_pass']          ?? '';
-    $dbName    = trim($_POST['db_name']     ?? 'ilshd_db');
+    $dbHost     = trim($_POST['db_host']     ?? 'localhost');
+    $dbUser     = trim($_POST['db_user']     ?? 'root');
+    $dbPass     = $_POST['db_pass']          ?? '';
+    $dbName     = trim($_POST['db_name']     ?? 'ilshd_db');
+    $adminFirst = trim($_POST['admin_first'] ?? '');
+    $adminLast  = trim($_POST['admin_last']  ?? '');
+    $adminEmail = trim($_POST['admin_email'] ?? '');
+    $adminPass  = $_POST['admin_pass']       ?? '';
+    $adminConf  = $_POST['admin_conf']       ?? '';
 
     // Validate
     if (!$dbHost || !$dbUser || !$dbName) {
         $errors[] = 'Database host, user, and name are required.';
+    }
+    if (!$adminFirst || !$adminLast || !$adminEmail || !$adminPass) {
+        $errors[] = 'All admin account fields are required.';
+    }
+    if ($adminPass && $adminConf && $adminPass !== $adminConf) {
+        $errors[] = 'Admin passwords do not match.';
+    }
+    if ($adminPass && strlen($adminPass) < 6) {
+        $errors[] = 'Admin password must be at least 6 characters.';
     }
 
     if (empty($errors)) {
@@ -130,6 +144,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 }
             }
 
+            // Step 4: Create admin account
+            $hash = password_hash($adminPass, PASSWORD_DEFAULT);
+            $pdo->prepare("
+                INSERT INTO users (first_name, last_name, department, classification, school_email, password, role)
+                VALUES (?, ?, 'ILS', 'Admin', ?, ?, 'admin')
+                ON DUPLICATE KEY UPDATE password = VALUES(password), role = 'admin'
+            ")->execute([$adminFirst, $adminLast, $adminEmail, $hash]);
+
             // Step 5: Create uploads dir
             if (!is_dir($uploadsDir)) {
                 mkdir($uploadsDir, 0755, true);
@@ -176,9 +198,12 @@ PHP;
 }
 
 // Default form values
-$dbHost    = $_POST['db_host']      ?? 'localhost';
-$dbUser    = $_POST['db_user']      ?? 'root';
-$dbName    = $_POST['db_name']      ?? 'ilshd_db';
+$dbHost     = $_POST['db_host']      ?? 'localhost';
+$dbUser     = $_POST['db_user']      ?? 'root';
+$dbName     = $_POST['db_name']      ?? 'ilshd_db';
+$adminFirst = $_POST['admin_first']  ?? '';
+$adminLast  = $_POST['admin_last']   ?? '';
+$adminEmail = $_POST['admin_email']  ?? '';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -400,11 +425,18 @@ $dbName    = $_POST['db_name']      ?? 'ilshd_db';
                     <span class="cred-label">Database</span>
                     <span class="cred-val"><?= htmlspecialchars($_POST['db_name'] ?? 'ilshd_db') ?></span>
                 </div>
+                <div class="cred-row">
+                    <span class="cred-label">Admin Email</span>
+                    <span class="cred-val"><?= htmlspecialchars($_POST['admin_email'] ?? '') ?></span>
+                </div>
+                <div class="cred-row">
+                    <span class="cred-label">Admin Password</span>
+                    <span class="cred-val" style="color:var(--text-light);">(as entered)</span>
+                </div>
             </div>
 
             <div class="success-links">
-                <a href="/ILSHD/login.php" class="btn-login">Student Login</a>
-                <a href="/ILSHD/admin/login.php" class="btn-admin">Admin Login</a>
+                <a href="/ILSHD/" class="btn-login">Go to Login</a>
             </div>
 
             <div class="security-warn">
@@ -481,12 +513,50 @@ $dbName    = $_POST['db_name']      ?? 'ilshd_db';
             </p>
         </div>
 
-        <!-- Step 3: Run -->
+        <!-- Step 3: Admin Account -->
         <div class="setup-card">
-            <h2><span class="step-num">3</span> Run Setup</h2>
+            <h2><span class="step-num">3</span> Admin Account</h2>
+
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="admin_first">First Name</label>
+                    <input type="text" id="admin_first" name="admin_first" class="form-control"
+                           value="<?= htmlspecialchars($_POST['admin_first'] ?? '') ?>" required>
+                </div>
+                <div class="form-group">
+                    <label for="admin_last">Last Name</label>
+                    <input type="text" id="admin_last" name="admin_last" class="form-control"
+                           value="<?= htmlspecialchars($_POST['admin_last'] ?? '') ?>" required>
+                </div>
+            </div>
+
+            <div class="form-group" style="margin-top:12px;">
+                <label for="admin_email">Email</label>
+                <input type="email" id="admin_email" name="admin_email" class="form-control"
+                       placeholder="e.g., admin@ils.local"
+                       value="<?= htmlspecialchars($_POST['admin_email'] ?? '') ?>" required>
+            </div>
+
+            <div class="form-grid" style="margin-top:12px;">
+                <div class="form-group">
+                    <label for="admin_pass">Password</label>
+                    <input type="password" id="admin_pass" name="admin_pass" class="form-control"
+                           placeholder="Min. 6 characters" required>
+                </div>
+                <div class="form-group">
+                    <label for="admin_conf">Confirm Password</label>
+                    <input type="password" id="admin_conf" name="admin_conf" class="form-control"
+                           placeholder="Repeat password" required>
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 4: Run -->
+        <div class="setup-card">
+            <h2><span class="step-num">4</span> Run Setup</h2>
             <p style="font-size:0.875rem;color:var(--text-gray);margin-bottom:16px;">
                 This will create the database <strong><?= htmlspecialchars($dbName) ?></strong>,
-                and all required tables.
+                all required tables, and the admin account.
                 Existing tables will <strong>not</strong> be dropped.
             </p>
             <button type="submit" class="btn-setup" <?= !$reqAllPass ? 'disabled title="Fix requirements first"' : '' ?>>

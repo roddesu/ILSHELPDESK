@@ -8,6 +8,18 @@ if (isLoggedIn()) {
 }
 
 require_once __DIR__ . '/includes/auth_actions.php';
+
+// Initialize view variables to prevent undefined variable warnings
+$successMsg      = $successMsg      ?? null;
+$loginError      = $loginError      ?? null;
+$signupError     = $signupError     ?? null;
+$forgotError     = $forgotError     ?? null;
+$forgotSuccess   = $forgotSuccess   ?? null;
+$showVerifyModal = $showVerifyModal ?? false;
+$verifyError     = $verifyError     ?? null;
+$verifySuccess   = $verifySuccess   ?? null;
+$showResetModal  = $showResetModal  ?? false;
+$resetError      = $resetError      ?? null;
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -44,11 +56,6 @@ require_once __DIR__ . '/includes/auth_actions.php';
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body p-4 pt-0">
-                <div class="text-center mb-4">
-                    <h3 class="fw-bold mb-1">Welcome Back</h3>
-                    <p class="text-muted small">Login to your account</p>
-                </div>
-
                 <?php if ($successMsg): ?>
                     <div class="alert alert-success alert-dismissible fade show" role="alert">
                         <?= htmlspecialchars($successMsg) ?>
@@ -65,9 +72,9 @@ require_once __DIR__ . '/includes/auth_actions.php';
                 <form method="POST" novalidate>
                     <input type="hidden" name="action" value="login">
                     <div class="mb-3">
-                        <label for="email" class="form-label">ID Number</label>
+                        <label for="email" class="form-label">Email</label>
                         <input type="text" id="email" name="email" class="form-control"
-                               placeholder="ID Number"
+                               placeholder="Enter your email"
                                value="<?= htmlspecialchars($_POST['email'] ?? '') ?>" required>
                     </div>
 
@@ -75,7 +82,7 @@ require_once __DIR__ . '/includes/auth_actions.php';
                         <label for="password" class="form-label">Password</label>
                         <div class="input-group">
                             <input type="password" id="password" name="password" class="form-control"
-                                   placeholder="Enter password" required>
+                                   placeholder="Enter your password" required>
                             <button type="button" class="btn btn-outline-secondary" onclick="togglePassword('password', this)" aria-label="Toggle password">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
@@ -91,12 +98,13 @@ require_once __DIR__ . '/includes/auth_actions.php';
                                    <?= isset($_POST['remember']) ? 'checked' : '' ?>>
                             <label class="form-check-label small" for="remember">Remember me</label>
                         </div>
-                        <button type="button" class="btn btn-link text-decoration-none small p-0" style="color:var(--ils-green);" data-bs-target="#forgotModal" data-bs-toggle="modal">Forgot Password?</button>
+                        <a href="#" class="text-decoration-none small" style="color:var(--ils-green);" data-bs-toggle="modal" data-bs-target="#forgotModal" data-bs-dismiss="modal">Forgot Password?</a>
                     </div>
 
-                    <div class="d-grid">
+                    <div class="d-grid mb-3">
                         <button type="submit" class="btn btn-yellow btn-lg">Login</button>
                     </div>
+                    <p class="text-center small mb-0">Don't have an account? <a href="#" class="text-decoration-none fw-semibold" style="color:var(--ils-green);" data-bs-target="#signupModal" data-bs-toggle="modal">Sign up</a></p>
                 </form>
             </div>
         </div>
@@ -209,37 +217,43 @@ require_once __DIR__ . '/includes/auth_actions.php';
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body p-4 pt-0">
-                <div class="text-center mb-4">
-                    <h3 class="fw-bold mb-1">Forgot Password</h3>
-                    <p class="text-muted small">Enter your email to receive a reset code</p>
-                </div>
+                <h5 class="fw-bold mb-1">Reset your password</h5>
+                <p class="text-muted small mb-4">Enter your School Email, and we'll send you a code to reset your password.</p>
 
-                <?php if ($forgotSuccess): ?>
-                    <div class="alert alert-success alert-dismissible fade show" role="alert">
-                        <?= htmlspecialchars($forgotSuccess) ?>
+                <?php if ($forgotError): ?>
+                    <div class="alert alert-danger alert-dismissible fade show">
+                        <?= htmlspecialchars($forgotError) ?>
                         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                     </div>
                 <?php endif; ?>
-                <?php if ($forgotError): ?>
-                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                        <?= htmlspecialchars($forgotError) ?>
+                <?php if ($forgotSuccess): ?>
+                    <div class="alert alert-success alert-dismissible fade show">
+                        <?= htmlspecialchars($forgotSuccess) ?>
                         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                     </div>
                 <?php endif; ?>
 
                 <form method="POST" novalidate>
                     <input type="hidden" name="action" value="forgot">
-                    <div class="mb-3">
-                        <label class="form-label small">School Email</label>
-                        <input type="email" name="email" class="form-control" placeholder="you@ub.edu.ph" required>
+                    <div class="mb-4">
+                        <label class="form-label">School Email</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-white">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                                </svg>
+                            </span>
+                            <input type="email" name="email" class="form-control" placeholder="you@ub.edu.ph"
+                                   value="<?= htmlspecialchars($_POST['email'] ?? '') ?>" required>
+                        </div>
                     </div>
                     <div class="d-grid mb-3">
-                        <button type="submit" class="btn btn-yellow btn-lg">Send Code</button>
-                    </div>
-                    <div class="text-center">
-                        <button type="button" class="btn btn-link text-decoration-none small" style="color:var(--ils-green);" data-bs-target="#loginModal" data-bs-toggle="modal">Back to Login</button>
+                        <button type="submit" class="btn btn-yellow btn-lg">Request Reset Link</button>
                     </div>
                 </form>
+                <p class="text-center small mb-0">
+                    <a href="#" class="text-decoration-none fw-semibold" style="color:var(--ils-green);" data-bs-toggle="modal" data-bs-target="#loginModal" data-bs-dismiss="modal">Back to Login</a>
+                </p>
             </div>
         </div>
     </div>
@@ -253,19 +267,17 @@ require_once __DIR__ . '/includes/auth_actions.php';
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body p-4 pt-0">
-                <div class="text-center mb-4">
-                    <h3 class="fw-bold mb-1">Verify Code</h3>
-                    <p class="text-muted small">Enter the code sent to your email</p>
-                </div>
+                <h5 class="fw-bold mb-1">Verify Code</h5>
+                <p class="text-muted small mb-4">Provide the verification code sent to your email to proceed.</p>
 
                 <?php if ($verifySuccess): ?>
-                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <div class="alert alert-success alert-dismissible fade show">
                         <?= $verifySuccess ?>
                         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                     </div>
                 <?php endif; ?>
                 <?php if ($verifyError): ?>
-                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <div class="alert alert-danger alert-dismissible fade show">
                         <?= htmlspecialchars($verifyError) ?>
                         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                     </div>
@@ -274,17 +286,18 @@ require_once __DIR__ . '/includes/auth_actions.php';
                 <form method="POST" novalidate>
                     <input type="hidden" name="action" value="verify">
                     <div class="mb-4">
+                        <label class="form-label">Verification Code</label>
                         <input type="text" name="code" class="form-control form-control-lg text-center"
-                               placeholder="000000" maxlength="6"
+                               placeholder="Enter code" maxlength="6"
                                style="letter-spacing:0.3em; font-size:1.4rem;" required>
                     </div>
                     <div class="d-grid mb-3">
                         <button type="submit" class="btn btn-yellow btn-lg">Confirm</button>
                     </div>
-                    <div class="text-center d-flex justify-content-between">
-                        <button type="submit" name="resend" value="1" class="btn btn-link text-decoration-none small p-0" style="color:var(--ils-green);">Resend Code</button>
-                        <button type="button" class="btn btn-link text-decoration-none small p-0 text-muted" data-bs-target="#forgotModal" data-bs-toggle="modal">Change Email</button>
-                    </div>
+                </form>
+                <form method="POST" class="text-center">
+                    <input type="hidden" name="action" value="verify">
+                    <button type="submit" name="resend" class="btn btn-link text-decoration-none" style="color:var(--ils-green); font-size:0.875rem;">Resend Verification Code</button>
                 </form>
             </div>
         </div>
@@ -299,13 +312,11 @@ require_once __DIR__ . '/includes/auth_actions.php';
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body p-4 pt-0">
-                <div class="text-center mb-4">
-                    <h3 class="fw-bold mb-1">Reset Password</h3>
-                    <p class="text-muted small">Create a new password for your account</p>
-                </div>
+                <h5 class="fw-bold mb-1">Create New Password</h5>
+                <p class="text-muted small mb-4">Choose a new password for your account.</p>
 
                 <?php if ($resetError): ?>
-                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <div class="alert alert-danger alert-dismissible fade show">
                         <?= htmlspecialchars($resetError) ?>
                         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                     </div>
@@ -314,20 +325,26 @@ require_once __DIR__ . '/includes/auth_actions.php';
                 <form method="POST" novalidate>
                     <input type="hidden" name="action" value="reset_password">
                     <div class="mb-3">
-                        <label class="form-label small">New Password</label>
+                        <label class="form-label">New Password</label>
                         <div class="input-group">
-                            <input type="password" id="rpass" name="password" class="form-control" placeholder="At least 6 characters" required>
-                            <button type="button" class="btn btn-outline-secondary" onclick="togglePassword('rpass', this)">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                            <input type="password" id="rpw1" name="password" class="form-control" placeholder="Enter new password" required>
+                            <button type="button" class="btn btn-outline-secondary" onclick="togglePassword('rpw1', this)" aria-label="Toggle password">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                </svg>
                             </button>
                         </div>
                     </div>
                     <div class="mb-4">
-                        <label class="form-label small">Confirm Password</label>
+                        <label class="form-label">Confirm Password</label>
                         <div class="input-group">
-                            <input type="password" id="rcpass" name="confirm_password" class="form-control" placeholder="Repeat password" required>
-                            <button type="button" class="btn btn-outline-secondary" onclick="togglePassword('rcpass', this)">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                            <input type="password" id="rpw2" name="confirm_password" class="form-control" placeholder="Confirm new password" required>
+                            <button type="button" class="btn btn-outline-secondary" onclick="togglePassword('rpw2', this)" aria-label="Toggle password">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                </svg>
                             </button>
                         </div>
                     </div>
@@ -340,64 +357,41 @@ require_once __DIR__ . '/includes/auth_actions.php';
     </div>
 </div>
 
+
 <footer class="py-3 text-center ils-footer">
     &copy; 2026 ILSSupport. All rights reserved.
 </footer>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="/ILSHD/js/main.js"></script>
-<?php if ($loginError || $successMsg): ?>
-<script>
-    var loginModal = new bootstrap.Modal(document.getElementById('loginModal'));
-    loginModal.show();
-</script>
-<?php endif; ?>
-<?php if ($signupError): ?>
-<script>
-    var signupModal = new bootstrap.Modal(document.getElementById('signupModal'));
-    signupModal.show();
-</script>
-<?php endif; ?>
-<?php if ($forgotError || $forgotSuccess): ?>
-<script>
-    var forgotModal = new bootstrap.Modal(document.getElementById('forgotModal'));
-    forgotModal.show();
-</script>
-<?php endif; ?>
-<?php if ($showVerifyModal): ?>
-<script>
-    var verifyModal = new bootstrap.Modal(document.getElementById('verifyModal'));
-    verifyModal.show();
-</script>
-<?php endif; ?>
 <?php if ($showResetModal): ?>
-<script>
-    var resetModal = new bootstrap.Modal(document.getElementById('resetModal'));
-    resetModal.show();
-</script>
+<script>document.addEventListener('DOMContentLoaded',()=>new bootstrap.Modal(document.getElementById('resetModal')).show());</script>
+<?php elseif ($showVerifyModal): ?>
+<script>document.addEventListener('DOMContentLoaded',()=>new bootstrap.Modal(document.getElementById('verifyModal')).show());</script>
+<?php elseif ($forgotError || $forgotSuccess): ?>
+<script>document.addEventListener('DOMContentLoaded',()=>new bootstrap.Modal(document.getElementById('forgotModal')).show());</script>
+<?php elseif ($loginError || $successMsg): ?>
+<script>document.addEventListener('DOMContentLoaded',()=>new bootstrap.Modal(document.getElementById('loginModal')).show());</script>
+<?php elseif ($signupError): ?>
+<script>document.addEventListener('DOMContentLoaded',()=>new bootstrap.Modal(document.getElementById('signupModal')).show());</script>
 <?php endif; ?>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    function setupValidation(passId, confirmId) {
-        const p = document.getElementById(passId);
-        const c = document.getElementById(confirmId);
-        if (!p || !c) return;
-
-        const validate = () => {
-            if (c.value === '') {
-                c.classList.remove('is-invalid', 'is-valid');
-            } else if (p.value !== c.value) {
-                c.classList.add('is-invalid');
-                c.classList.remove('is-valid');
-            } else {
-                c.classList.remove('is-invalid');
-                c.classList.add('is-valid');
-            }
-        };
-        p.addEventListener('input', validate);
-        c.addEventListener('input', validate);
-    }
-    setupValidation('spass', 'scpass'); // Signup
-    setupValidation('rpass', 'rcpass'); // Reset Password
+    const p = document.getElementById('spass');
+    const c = document.getElementById('scpass');
+    if (!p || !c) return;
+    const validate = () => {
+        if (c.value === '') {
+            c.classList.remove('is-invalid', 'is-valid');
+        } else if (p.value !== c.value) {
+            c.classList.add('is-invalid');
+            c.classList.remove('is-valid');
+        } else {
+            c.classList.remove('is-invalid');
+            c.classList.add('is-valid');
+        }
+    };
+    p.addEventListener('input', validate);
+    c.addEventListener('input', validate);
 });
 </script>
 </body>

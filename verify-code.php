@@ -13,7 +13,7 @@ $error = '';
 $success = '';
 $email = $_SESSION['reset_email'] ?? '';
 
-if (!$email) {
+if (empty($email)) {
     header('Location: /ILSHD/forgot-password.php');
     exit;
 }
@@ -64,14 +64,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body class="d-flex flex-column min-vh-100" style="background:var(--ils-bg);">
 <div class="d-flex flex-grow-1 align-items-center justify-content-center py-4">
     <div class="auth-card">
-        <div class="card shadow-sm border-0 p-4">
-            <div class="auth-logo text-center mb-3">
+        <div class="text-center mb-4">
+            <div class="auth-logo mb-2">
                 <span class="ils-script">ils.</span>
                 <span class="ils-helpdesk">Help Desk</span>
             </div>
+        </div>
 
-            <h2 class="fw-bold mb-1" style="font-size:1.1rem;">Verify Code</h2>
-            <p class="text-muted mb-3" style="font-size:0.875rem;">
+        <div class="card shadow-sm border-0 p-4">
+            <p class="text-muted text-center mb-4" style="font-size:0.875rem;">
                 Provide the verification code sent to your email to proceed.
             </p>
 
@@ -92,16 +93,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <div class="mb-4">
                     <label for="code" class="form-label">Verification Code</label>
                     <input type="text" id="code" name="code" class="form-control form-control-lg text-center"
-                           placeholder="000000" maxlength="6"
+                           placeholder="Enter code" maxlength="6"
                            value="<?= htmlspecialchars($_POST['code'] ?? '') ?>"
                            style="letter-spacing:0.3em; font-size:1.4rem;" required>
                 </div>
-                <div class="d-grid">
+                <div class="d-grid mb-3">
                     <button type="submit" class="btn btn-yellow btn-lg">Confirm</button>
                 </div>
             </form>
 
-            <form method="POST" class="text-center mt-3">
+            <form method="POST" class="text-center">
                 <button type="submit" name="resend" class="btn btn-link text-decoration-none" style="color:var(--ils-green); font-size:0.875rem;">Resend Verification Code</button>
             </form>
         </div>
