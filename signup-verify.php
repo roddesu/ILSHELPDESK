@@ -40,7 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 unset($_SESSION['signup_data']);
                 unset($_SESSION['signup_code']);
                 
-                header('Location: /ILSHD/login.php?registered=1');
+                header('Location: /ILSHD/index.php?registered=1');
                 exit;
             } catch (PDOException $e) {
                 if ($e->getCode() == 23000) { // Integrity constraint violation (Duplicate entry)

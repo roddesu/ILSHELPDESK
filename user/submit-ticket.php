@@ -93,14 +93,19 @@ $issueMap = [
             <span class="ils-helpdesk" style="font-size:1rem;">Help Desk</span>
         </a>
         <div class="d-flex align-items-center gap-3">
-            <a href="/ILSHD/user/notifications.php" class="bell-wrap" aria-label="Notifications">
-                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
-                </svg>
-                <?php if ($unreadCount > 0): ?>
-                    <span class="notif-dot"><?= $unreadCount ?></span>
-                <?php endif; ?>
-            </a>
+            <div class="dropdown">
+                <a href="#" class="bell-wrap text-decoration-none" id="notifDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+                    </svg>
+                    <span class="notif-dot" id="notif-badge" style="display: none;"></span>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end p-0 shadow border-0" aria-labelledby="notifDropdown" style="width: 300px;">
+                    <li><div class="d-flex justify-content-between align-items-center px-3 py-2 border-bottom bg-light rounded-top"><h6 class="mb-0 small fw-bold">Notifications</h6></div></li>
+                    <div id="notif-list" style="max-height: 300px; overflow-y: auto;"></div>
+                    <li><a class="dropdown-item text-center small text-primary border-top py-2 rounded-bottom" id="notif-view-all" href="#">View All</a></li>
+                </ul>
+            </div>
             <div class="dropdown">
                 <a href="#" class="user-avatar text-decoration-none" data-bs-toggle="dropdown" aria-expanded="false">
                     <?php if ($user['profile_image']): ?>
@@ -285,5 +290,6 @@ if (subjectSel) {
 </script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="/ILSHD/js/main.js"></script>
+<script src="/ILSHD/js/notifications.js"></script>
 </body>
 </html>

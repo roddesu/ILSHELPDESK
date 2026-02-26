@@ -65,6 +65,15 @@ function sanitize($str) {
     return htmlspecialchars(trim($str ?? ''), ENT_QUOTES, 'UTF-8');
 }
 
+function expandEmailFromInput($input) {
+    $input = trim($input ?? '');
+    // If input doesn't contain '@', assume it's a student number and append domain
+    if (strpos($input, '@') === false) {
+        return $input . '@ub.edu.ph'; // Update this to your school's domain
+    }
+    return $input;
+}
+
 function getAdminUsers() {
     $db   = getDB();
     $stmt = $db->query("SELECT id, school_email FROM users WHERE role = 'admin'");

@@ -27,6 +27,7 @@ body { background-color: var(--ils-bg); color: var(--ils-text); }
     font-family: 'Brush Script MT', cursive;
     color: var(--ils-yellow);
     line-height: 1;
+    font-weight: bold;
     transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 .ils-helpdesk {
@@ -100,6 +101,11 @@ body { background-color: var(--ils-bg); color: var(--ils-text); }
 .form-control:focus, .form-select:focus {
     border-color: var(--ils-green);
     box-shadow: 0 0 0 0.2rem rgba(46,139,74,0.15);
+}
+.form-control:disabled, .form-control[readonly] {
+    background-color: #e9ecef;
+    color: #212529;
+    opacity: 1;
 }
 .form-check-input:checked { background-color: var(--ils-green); border-color: var(--ils-green); }
 

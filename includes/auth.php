@@ -18,7 +18,7 @@ function isStudent() {
 
 function requireLogin() {
     if (!isLoggedIn()) {
-        header('Location: /ILSHD/login.php');
+        header('Location: /ILSHD/index.php?login_required=1');
         exit;
     }
 }

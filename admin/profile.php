@@ -85,14 +85,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                 <span class="ils-helpdesk" style="font-size:1rem;">Help Desk</span>
             </a>
             <div class="d-flex align-items-center gap-3">
-                <a href="/ILSHD/admin/notifications.php" class="btn btn-link text-decoration-none position-relative" aria-label="Notifications">
+            <div class="dropdown">
+                <a href="#" class="bell-wrap text-decoration-none" id="notifDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                     <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
                     </svg>
-                    <?php if ($unreadCount > 0): ?>
-                        <span class="badge bg-danger position-absolute top-0 start-100 translate-middle"><?= $unreadCount ?></span>
-                    <?php endif; ?>
+                    <span class="notif-dot" id="notif-badge" style="display: none;"></span>
                 </a>
+                <ul class="dropdown-menu dropdown-menu-end p-0 shadow border-0" aria-labelledby="notifDropdown" style="width: 300px;">
+                    <li><div class="d-flex justify-content-between align-items-center px-3 py-2 border-bottom bg-light rounded-top"><h6 class="mb-0 small fw-bold">Notifications</h6></div></li>
+                    <div id="notif-list" style="max-height: 300px; overflow-y: auto;"></div>
+                    <li><a class="dropdown-item text-center small text-primary border-top py-2 rounded-bottom" id="notif-view-all" href="#">View All</a></li>
+                </ul>
+            </div>
                 <div class="dropdown">
                     <button class="btn btn-link text-decoration-none d-flex align-items-center gap-2" type="button" data-bs-toggle="dropdown">
                         <div class="rounded-circle bg-secondary d-flex align-items-center justify-content-center" style="width:32px; height:32px;">
@@ -114,62 +119,118 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         </div>
     </nav>
 
-    <main class="container py-4">
-        <div class="row justify-content-center">
-            <div class="col-lg-8">
-                <h2 class="section-heading mb-4">Admin Profile</h2>
-
-                <?php if ($error): ?>
-                    <div class="alert alert-danger alert-dismissible fade show"><?= htmlspecialchars($error) ?><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
-                <?php endif; ?>
-                <?php if ($success): ?>
-                    <div class="alert alert-success alert-dismissible fade show"><?= htmlspecialchars($success) ?><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
-                <?php endif; ?>
-
-                <div class="card ils-card mb-4">
-                    <div class="card-body p-4">
-                        <div class="d-flex flex-column flex-md-row align-items-center gap-4">
-                            <div class="position-relative">
-                                <div class="rounded-circle overflow-hidden d-flex align-items-center justify-content-center bg-secondary text-white" style="width:100px; height:100px; font-size:2.5rem;">
-                                    <?php if ($user['profile_image']): ?>
-                                        <img src="/ILSHD/uploads/<?= htmlspecialchars($user['profile_image']) ?>" alt="Avatar" class="w-100 h-100" style="object-fit:cover;">
-                                    <?php else: ?>
-                                        <?= strtoupper(substr($user['first_name'], 0, 1)) ?>
-                                    <?php endif; ?>
-                                </div>
-                                <button type="button" class="btn btn-sm btn-light position-absolute bottom-0 end-0 rounded-circle border shadow-sm d-flex align-items-center justify-content-center" style="width:32px;height:32px;" data-bs-toggle="modal" data-bs-target="#photoModal" title="Change Picture">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
-                                </button>
+    <main class="container py-5">
+        <div class="row g-4">
+            <!-- Left Column: Profile Card -->
+            <div class="col-lg-4">
+                <div class="card ils-card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center p-5">
+                        <div class="position-relative d-inline-block mb-4">
+                            <div class="rounded-circle overflow-hidden d-flex align-items-center justify-content-center bg-secondary text-white mx-auto shadow-sm" style="width:140px; height:140px; font-size:3.5rem;">
+                                <?php if ($user['profile_image']): ?>
+                                    <img src="/ILSHD/uploads/<?= htmlspecialchars($user['profile_image']) ?>" alt="Avatar" class="w-100 h-100" style="object-fit:cover;">
+                                <?php else: ?>
+                                    <?= strtoupper(substr($user['first_name'], 0, 1)) ?>
+                                <?php endif; ?>
                             </div>
-                            <div class="text-center text-md-start flex-grow-1">
-                                <h3 class="h4 mb-1"><?= htmlspecialchars($user['first_name'] . ' ' . $user['last_name']) ?></h3>
-                                <p class="text-muted mb-2"><?= htmlspecialchars(ucfirst($user['role'])) ?> &bull; <?= htmlspecialchars($user['department']) ?></p>
-                                <p class="mb-0 text-muted small"><?= htmlspecialchars($user['school_email']) ?></p>
-                            </div>
+                            <button type="button" class="btn btn-sm btn-light position-absolute bottom-0 end-0 rounded-circle border shadow-sm d-flex align-items-center justify-content-center" style="width:36px;height:36px;" data-bs-toggle="modal" data-bs-target="#photoModal" title="Change Picture">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                            </button>
+                        </div>
+                        
+                        <h3 class="fw-bold mb-1"><?= htmlspecialchars($user['first_name'] . ' ' . $user['last_name']) ?></h3>
+                        <p class="text-muted mb-3"><?= htmlspecialchars($user['school_email']) ?></p>
+                        
+                        <div class="d-flex justify-content-center gap-2 mb-4">
+                            <span class="badge bg-warning-subtle text-warning border border-warning-subtle rounded-pill px-3">
+                                <?= htmlspecialchars(ucfirst($user['role'])) ?>
+                            </span>
+                            <span class="badge bg-light text-dark border rounded-pill px-3">
+                                <?= htmlspecialchars($user['department']) ?>
+                            </span>
+                        </div>
+
+                        <div class="border-top pt-4">
+                            <small class="text-muted text-uppercase fw-bold" style="font-size:0.75rem; letter-spacing:1px;">Member Since</small>
+                            <div class="fw-medium mt-1"><?= formatDate($user['created_at']) ?></div>
                         </div>
                     </div>
                 </div>
+            </div>
 
-                <div class="card ils-card">
+            <!-- Right Column: Details & Settings -->
+            <div class="col-lg-8">
+                <?php if ($error): ?>
+                    <div class="alert alert-danger alert-dismissible fade show mb-4"><?= htmlspecialchars($error) ?><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+                <?php endif; ?>
+                <?php if ($success): ?>
+                    <div class="alert alert-success alert-dismissible fade show mb-4"><?= htmlspecialchars($success) ?><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+                <?php endif; ?>
+
+                <!-- Personal Info -->
+                <div class="card ils-card border-0 shadow-sm mb-4">
+                    <div class="card-header bg-white py-3 px-4 border-bottom">
+                        <h5 class="mb-0 fw-bold">Personal Information</h5>
+                    </div>
                     <div class="card-body p-4">
-                        <h5 class="mb-3">Security</h5>
+                        <form method="POST">
+                            <input type="hidden" name="action" value="change_phone">
+                            <div class="row g-4">
+                                <div class="col-md-6">
+                                    <label class="form-label small text-muted text-uppercase fw-bold">First Name</label>
+                                    <input type="text" class="form-control bg-light" value="<?= htmlspecialchars($user['first_name']) ?>" disabled>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label small text-muted text-uppercase fw-bold">Last Name</label>
+                                    <input type="text" class="form-control bg-light" value="<?= htmlspecialchars($user['last_name']) ?>" disabled>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label small text-muted text-uppercase fw-bold">Department</label>
+                                    <input type="text" class="form-control bg-light" value="<?= htmlspecialchars($user['department']) ?>" disabled>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label small text-muted text-uppercase fw-bold">Classification</label>
+                                    <input type="text" class="form-control bg-light" value="<?= htmlspecialchars($user['classification']) ?>" disabled>
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label small text-muted text-uppercase fw-bold">Phone Number</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-white text-muted">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 12.284 3 6V5z" /></svg>
+                                        </span>
+                                        <input type="text" name="phone" class="form-control" value="<?= htmlspecialchars($user['phone'] ?? '') ?>" placeholder="e.g. 09123456789">
+                                        <button type="submit" class="btn btn-outline-primary">Update</button>
+                                    </div>
+                                    <div class="form-text">This is the only editable personal field.</div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Security -->
+                <div class="card ils-card border-0 shadow-sm">
+                    <div class="card-header bg-white py-3 px-4 border-bottom">
+                        <h5 class="mb-0 fw-bold">Security Settings</h5>
+                    </div>
+                    <div class="card-body p-4">
                         <form method="POST">
                             <input type="hidden" name="action" value="change_password">
                             <div class="row g-3">
                                 <div class="col-md-4">
-                                    <label class="form-label">Current Password</label>
+                                    <label class="form-label small text-muted text-uppercase fw-bold">Current Password</label>
                                     <input type="password" name="current_password" class="form-control" required>
                                 </div>
                                 <div class="col-md-4">
-                                    <label class="form-label">New Password</label>
+                                    <label class="form-label small text-muted text-uppercase fw-bold">New Password</label>
                                     <input type="password" name="new_password" class="form-control" required>
                                 </div>
                                 <div class="col-md-4">
-                                    <label class="form-label">Confirm Password</label>
+                                    <label class="form-label small text-muted text-uppercase fw-bold">Confirm Password</label>
                                     <input type="password" name="confirm_password" class="form-control" required>
                                 </div>
-                                <div class="col-12">
-                                    <button type="submit" class="btn btn-yellow">Change Password</button>
+                                <div class="col-12 text-end mt-4">
+                                    <button type="submit" class="btn btn-yellow px-4">Change Password</button>
                                 </div>
                             </div>
                         </form>
@@ -206,5 +267,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="/ILSHD/js/notifications.js"></script>
 </body>
 </html>
