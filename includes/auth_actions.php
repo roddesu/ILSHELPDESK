@@ -65,9 +65,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         $class  = $_POST['classification'] ?? '';
         $email  = trim($_POST['email'] ?? '');
         $pass   = trim($_POST['password'] ?? '');
+        $confirm = trim($_POST['confirm_password'] ?? '');
 
-        if (!$first || !$last || !$dept || !$class || !$email || !$pass) {
+        if (!$first || !$last || !$dept || !$class || !$email || !$pass || !$confirm) {
             $signupError = 'Please fill in all required fields.';
+        } elseif ($pass !== $confirm) {
+            $signupError = 'Passwords do not match.';
         } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL) || substr($email, -10) !== '@ub.edu.ph') {
             $signupError = 'Please enter a valid @ub.edu.ph email address.';
         } elseif (strlen($pass) < 6) {

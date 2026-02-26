@@ -172,11 +172,21 @@ require_once __DIR__ . '/includes/auth_actions.php';
                         <input type="email" name="email" class="form-control" placeholder="you@ub.edu.ph" value="<?= htmlspecialchars($_POST['email'] ?? '') ?>" required>
                     </div>
 
-                    <div class="mb-4">
+                    <div class="mb-3">
                         <label class="form-label small">Password <span class="text-danger">*</span></label>
                         <div class="input-group">
                             <input type="password" id="spass" name="password" class="form-control" placeholder="Min. 6 chars" required>
                             <button type="button" class="btn btn-outline-secondary" onclick="togglePassword('spass', this)">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label small">Confirm Password <span class="text-danger">*</span></label>
+                        <div class="input-group">
+                            <input type="password" id="scpass" name="confirm_password" class="form-control" placeholder="Repeat password" required>
+                            <button type="button" class="btn btn-outline-secondary" onclick="togglePassword('scpass', this)">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
                             </button>
                         </div>
