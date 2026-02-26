@@ -25,6 +25,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     
     // --- LOGIN ---
     if ($_POST['action'] === 'login') {
+        // Hardcoded Admin Login
+        if (($_POST['email'] ?? '') === 'Admin' && ($_POST['password'] ?? '') === 'ilsadmin') {
+            loginUser([
+                'id' => 0,
+                'first_name' => 'System',
+                'last_name' => 'Admin',
+                'school_email' => 'admin@local',
+                'role' => 'admin',
+                'profile_image' => null
+            ]);
+            header('Location: /ILSHD/admin/tickets.php');
+            exit;
+        }
+
         $email    = expandEmailFromInput($_POST['email'] ?? '');
         $password = trim($_POST['password'] ?? '');
         $remember = isset($_POST['remember']);

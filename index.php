@@ -65,9 +65,9 @@ require_once __DIR__ . '/includes/auth_actions.php';
                 <form method="POST" novalidate>
                     <input type="hidden" name="action" value="login">
                     <div class="mb-3">
-                        <label for="email" class="form-label">Student Number</label>
+                        <label for="email" class="form-label">ID Number</label>
                         <input type="text" id="email" name="email" class="form-control"
-                               placeholder="Student Number"
+                               placeholder="ID Number"
                                value="<?= htmlspecialchars($_POST['email'] ?? '') ?>" required>
                     </div>
 

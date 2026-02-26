@@ -168,6 +168,12 @@ function sendEmail($to, $subject, $message) {
     }
 }
 
+function sendTicketConfirmation($to) {
+    $subject = "Ticket Received";
+    $message = "Thank you for submitting your ticket. Our support team will work on resolving the issue within the next 1–2 days. We appreciate your patience.";
+    sendEmail($to, $subject, $message);
+}
+
 function cleanupExpiredTokens() {
     $db = getDB();
     $db->query("DELETE FROM password_resets WHERE expires_at < NOW()");
